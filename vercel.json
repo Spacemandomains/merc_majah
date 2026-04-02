@@ -6,7 +6,7 @@
     "api/index.mjs": {
       "runtime": "nodejs20.x",
       "maxDuration": 60,
-      "includeFiles": ["artifacts/**"]
+      "includeFiles": "artifacts/**"
     }
   },
   "rewrites": [
