@@ -32,5 +32,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/mcp", mcpRouter);
 app.use("/api", router);
+// Vercel strips the /api prefix when invoking the serverless function
+// so mount the same router at / as a fallback
+app.use("/", router);
 
 export default app;
