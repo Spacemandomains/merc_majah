@@ -2,7 +2,7 @@
   "version": 2,
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm --filter @workspace/api-server run build:vercel",
-  "outputDirectory": "public",
+  "outputDirectory": ".",
   "functions": {
     "api/index.mjs": {
       "runtime": "nodejs20.x",
