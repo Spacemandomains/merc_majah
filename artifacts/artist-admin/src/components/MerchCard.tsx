@@ -18,8 +18,14 @@ export default function MerchCard() {
 
   useEffect(() => {
     fetch("/api/merch")
-      .then((r) => r.json())
-      .then((data) => { setMerch(data); setLoading(false); })
+      .then((r) => {
+        if (!r.ok) { setLoading(false); return; }
+        return r.json();
+      })
+      .then((data) => {
+        if (data?.name) { setMerch(data); }
+        setLoading(false);
+      })
       .catch(() => { setError(true); setLoading(false); });
   }, []);
 
