@@ -1,17 +1,36 @@
 import { Router, type IRouter } from "express";
+import { db } from "@workspace/db";
+import { artistsTable } from "@workspace/db/schema";
 
 const router: IRouter = Router();
 
-router.get("/", (_req, res) => {
-  const item = {
-    name: process.env.MERCH_ITEM_NAME ?? "Majah Life Tee Shirt",
-    price: Number(process.env.MERCH_ITEM_PRICE ?? "25"),
-    currency: "USD",
-    description: process.env.MERCH_ITEM_DESCRIPTION ?? "More than a garment; it's a manifesto. The Majah Life Essential Tee is the physical manifestation",
-    paymentLink: process.env.STRIPE_MERCH_PAYMENT_LINK ?? "",
-    available: true,
-  };
-  res.json(item);
+router.get("/", async (_req, res) => {
+  try {
+    const artists = await db
+      .select({ merch: artistsTable.merch })
+      .from(artistsTable)
+      .limit(10);
+
+    for (const row of artists) {
+      const m = row.merch as Record<string, any> | null;
+      if (m && m.name) {
+        res.json({
+          name: m.name,
+          price: m.price ?? null,
+          currency: m.currency ?? "USD",
+          description: m.description ?? "",
+          paymentLink: m.paymentLink ?? "",
+          imageUrl: m.imageUrl ?? null,
+          available: m.available ?? true,
+        });
+        return;
+      }
+    }
+
+    res.status(404).json({ error: "No merch configured" });
+  } catch {
+    res.status(500).json({ error: "Failed to load merch" });
+  }
 });
 
 export default router;
