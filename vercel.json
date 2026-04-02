@@ -5,8 +5,8 @@
   "outputDirectory": "artifacts/artist-admin/dist/public",
   "functions": {
     "api/index.mjs": {
-      "runtime": "nodejs20.x",
-      "maxDuration": 60
+      "maxDuration": 60,
+      "includeFiles": "artifacts/**"
     }
   },
   "rewrites": [
