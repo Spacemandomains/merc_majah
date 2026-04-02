@@ -17,6 +17,15 @@ A complete music artist directory system with a dedicated MCP (Model Context Pro
 - **Build**: esbuild (ESM bundle)
 - **MCP SDK**: @modelcontextprotocol/sdk v1.10+
 
+## Replit Environment
+
+- **Database**: Replit built-in PostgreSQL (DATABASE_URL env var set automatically)
+- **Schema management**: `pnpm --filter @workspace/db run push` to sync schema
+- **Workflows**:
+  - `Artist Admin` — `PORT=23242 BASE_PATH=/ pnpm --filter @workspace/artist-admin run dev` (port 23242, webview)
+  - `API Server` — `PORT=8080 pnpm --filter @workspace/api-server run dev` (port 8080, console)
+  - `Merc Majah MCP Server` — `pnpm --filter @workspace/mcp-server run dev` (port 3001, console)
+
 ## Structure
 
 ```text
