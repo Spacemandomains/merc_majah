@@ -65,6 +65,7 @@ export const artistsTable = pgTable("artists", {
   origin: text("origin"),
   formedYear: integer("formed_year"),
   imageUrl: text("image_url"),
+  imageStoreUrl: text("image_store_url"),
   socialLinks: jsonb("social_links").$type<SocialLinks>().default({}),
   discography: jsonb("discography").$type<Album[]>().default([]),
   musicVideos: jsonb("music_videos").$type<MusicVideo[]>().default([]),
