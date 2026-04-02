@@ -25,6 +25,7 @@ function mapArtist(artist: typeof artistsTable.$inferSelect) {
     discography: artist.discography ?? [],
     musicVideos: artist.musicVideos ?? [],
     pressQuotes: artist.pressQuotes ?? [],
+    merch: artist.merch ?? {},
     bookingEmail: artist.bookingEmail ?? undefined,
     pressEmail: artist.pressEmail ?? undefined,
     labels: artist.labels ?? [],
