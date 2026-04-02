@@ -44,6 +44,17 @@ export const pressQuoteSchema = z.object({
 });
 export type PressQuote = z.infer<typeof pressQuoteSchema>;
 
+export const merchSchema = z.object({
+  name: z.string().optional(),
+  price: z.number().optional(),
+  currency: z.string().optional(),
+  description: z.string().optional(),
+  paymentLink: z.string().optional(),
+  imageUrl: z.string().optional(),
+  available: z.boolean().optional(),
+});
+export type Merch = z.infer<typeof merchSchema>;
+
 export const artistsTable = pgTable("artists", {
   id: serial("id").primaryKey(),
   slug: text("slug").notNull().unique(),
@@ -58,6 +69,7 @@ export const artistsTable = pgTable("artists", {
   discography: jsonb("discography").$type<Album[]>().default([]),
   musicVideos: jsonb("music_videos").$type<MusicVideo[]>().default([]),
   pressQuotes: jsonb("press_quotes").$type<PressQuote[]>().default([]),
+  merch: jsonb("merch").$type<Merch>().default({}),
   bookingEmail: text("booking_email"),
   pressEmail: text("press_email"),
   labels: jsonb("labels").$type<string[]>().default([]),
