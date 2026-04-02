@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft, Plus, Trash2, Upload, Bot, Music, Globe, FileText, UserCircle, Save, Video } from "lucide-react";
+import { Loader2, ArrowLeft, Plus, Trash2, Upload, Bot, Music, Globe, FileText, UserCircle, Save, Video, ShoppingBag } from "lucide-react";
 import { TagInput } from "@/components/ui/tag-input";
 
 const albumSchema = z.object({
@@ -69,6 +69,15 @@ const formSchema = z.object({
   discography: z.array(albumSchema).optional(),
   musicVideos: z.array(musicVideoSchema).optional(),
   pressQuotes: z.array(quoteSchema).optional(),
+  merch: z.object({
+    name: z.string().optional(),
+    price: z.coerce.number().optional().or(z.literal("")),
+    currency: z.string().optional(),
+    description: z.string().optional(),
+    paymentLink: z.string().url().optional().or(z.literal("")),
+    imageUrl: z.string().url().optional().or(z.literal("")),
+    available: z.boolean().optional(),
+  }).optional(),
   llmContext: z.string().optional(),
 });
 
@@ -136,6 +145,7 @@ export default function ArtistEditor() {
       discography: [],
       musicVideos: [],
       pressQuotes: [],
+      merch: { name: "", price: "", currency: "USD", description: "", paymentLink: "", imageUrl: "", available: true },
       llmContext: "",
     }
   });
@@ -165,6 +175,15 @@ export default function ArtistEditor() {
         })),
         musicVideos: (artist.musicVideos || []) as any,
         pressQuotes: artist.pressQuotes || [],
+        merch: {
+          name: (artist as any).merch?.name ?? "",
+          price: (artist as any).merch?.price ?? "",
+          currency: (artist as any).merch?.currency ?? "USD",
+          description: (artist as any).merch?.description ?? "",
+          paymentLink: (artist as any).merch?.paymentLink ?? "",
+          imageUrl: (artist as any).merch?.imageUrl ?? "",
+          available: (artist as any).merch?.available ?? true,
+        },
         llmContext: artist.llmContext || "",
       });
     }
@@ -359,7 +378,7 @@ export default function ArtistEditor() {
             <CardHeader className="bg-secondary/10 border-b border-border/50 pb-4">
               <CardTitle className="text-base flex items-center gap-2"><Globe className="w-4 h-4 text-primary" /> Digital Footprint</CardTitle>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent className="pt-6 space-y-8">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
                 <div className="space-y-5">
                   <h4 className="font-semibold text-sm text-primary border-b border-border/50 pb-2 uppercase tracking-widest">Contact Routes</h4>
@@ -388,6 +407,59 @@ export default function ArtistEditor() {
                       )} />
                     ))}
                   </div>
+                </div>
+              </div>
+
+              <div className="border-t border-border/50 pt-6 space-y-5">
+                <h4 className="font-semibold text-sm text-primary border-b border-border/50 pb-2 uppercase tracking-widest flex items-center gap-2">
+                  <ShoppingBag className="w-3.5 h-3.5" /> Official Merch
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <FormField control={form.control} name="merch.name" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-foreground/70 text-sm">Item Name</FormLabel>
+                      <FormControl><Input {...field} value={field.value ?? ""} placeholder="e.g. Majah Life Tee Shirt" className="bg-background/50" /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <div className="grid grid-cols-2 gap-3">
+                    <FormField control={form.control} name="merch.price" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-foreground/70 text-sm">Price</FormLabel>
+                        <FormControl><Input type="number" {...field} value={field.value ?? ""} placeholder="25" className="font-mono bg-background/50" /></FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )} />
+                    <FormField control={form.control} name="merch.currency" render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-foreground/70 text-sm">Currency</FormLabel>
+                        <FormControl><Input {...field} value={field.value ?? ""} placeholder="USD" className="font-mono bg-background/50" /></FormControl>
+                      </FormItem>
+                    )} />
+                  </div>
+                </div>
+                <FormField control={form.control} name="merch.description" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground/70 text-sm">Description</FormLabel>
+                    <FormControl><Textarea {...field} value={field.value ?? ""} placeholder="More than a garment; it's a manifesto..." className="min-h-[80px] bg-background/50" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  <FormField control={form.control} name="merch.paymentLink" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-foreground/70 text-sm">Stripe / Payment Link</FormLabel>
+                      <FormControl><Input {...field} value={field.value ?? ""} placeholder="https://buy.stripe.com/..." className="font-mono text-xs bg-background/50" /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
+                  <FormField control={form.control} name="merch.imageUrl" render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-foreground/70 text-sm">Product Image URL</FormLabel>
+                      <FormControl><Input {...field} value={field.value ?? ""} placeholder="https://..." className="font-mono text-xs bg-background/50" /></FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )} />
                 </div>
               </div>
             </CardContent>
