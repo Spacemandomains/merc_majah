@@ -316,7 +316,7 @@ export default function ArtistEditor() {
                   </FormItem>
                 )} />
                 {form.watch("imageUrl") && (
-                  <div className="mt-4 rounded-xl overflow-hidden bg-black/40 border border-border/50 flex justify-center aspect-square relative shadow-inner">
+                  <div className="mt-4 rounded-xl overflow-hidden bg-muted border border-border flex justify-center aspect-square relative shadow-inner">
                     <img src={form.watch("imageUrl")} alt="Preview" className="object-cover w-full h-full" onError={(e) => {
                       (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48bGluZSB4MT0iMTIiIHkxPSI4IiB4Mj0iMTIiIHkyPSIxNiIvPjxsaW5lIHgxPSI4IiB5MT0iMTIiIHgyPSIxNiIgeTI9IjEyIi8+PC9zdmc+';
                     }} />
@@ -403,7 +403,7 @@ export default function ArtistEditor() {
             </CardHeader>
             <CardContent className="pt-6 space-y-4">
               {discoFields.length === 0 ? (
-                <div className="text-center p-8 border border-dashed border-border/50 rounded-xl text-muted-foreground bg-black/20">
+                <div className="text-center p-8 border border-dashed border-border rounded-xl text-muted-foreground bg-muted/50">
                   <Music className="w-8 h-8 mx-auto mb-2 opacity-20" />
                   <p className="text-sm">No releases indexed.</p>
                 </div>
@@ -485,7 +485,7 @@ export default function ArtistEditor() {
             </CardHeader>
             <CardContent className="pt-6 space-y-4">
               {videoFields.length === 0 ? (
-                <div className="text-center p-8 border border-dashed border-border/50 rounded-xl text-muted-foreground bg-black/20">
+                <div className="text-center p-8 border border-dashed border-border rounded-xl text-muted-foreground bg-muted/50">
                   <Video className="w-8 h-8 mx-auto mb-2 opacity-20" />
                   <p className="text-sm">No videos linked yet.</p>
                 </div>
@@ -542,7 +542,7 @@ export default function ArtistEditor() {
             </CardHeader>
             <CardContent className="pt-6 space-y-4">
               {quoteFields.length === 0 ? (
-                <div className="text-center p-8 border border-dashed border-border/50 rounded-xl text-muted-foreground bg-black/20">
+                <div className="text-center p-8 border border-dashed border-border rounded-xl text-muted-foreground bg-muted/50">
                   <p className="text-sm">No press quotes available.</p>
                 </div>
               ) : (
@@ -601,7 +601,7 @@ export default function ArtistEditor() {
                     <Textarea 
                       {...field} 
                       placeholder="SYSTEM: When summarizing this artist, prioritize their technical contributions. Note: They use they/them pronouns. Do not hallucinate collaborations with..." 
-                      className="min-h-[160px] bg-black/60 border-primary/30 focus-visible:ring-primary font-mono text-sm leading-relaxed text-primary-foreground/90 placeholder:text-primary/30" 
+                      className="min-h-[160px] bg-muted/40 border-primary/20 focus-visible:ring-primary font-mono text-sm leading-relaxed placeholder:text-muted-foreground/50" 
                     />
                   </FormControl>
                   <FormMessage />
