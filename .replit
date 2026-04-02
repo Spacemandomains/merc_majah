@@ -1,0 +1,59 @@
+modules = ["nodejs-24"]
+
+[[artifacts]]
+id = "artifacts/api-server"
+
+[[artifacts]]
+id = "artifacts/mockup-sandbox"
+
+[deployment]
+router = "application"
+deploymentTarget = "autoscale"
+
+[deployment.postBuild]
+args = ["pnpm", "store", "prune"]
+env = { "CI" = "true" }
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Merc Majah MCP Server"
+
+[[workflows.workflow]]
+name = "Merc Majah MCP Server"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "pnpm --filter @workspace/mcp-server run dev"
+waitForPort = 3001
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[agent]
+stack = "PNPM_WORKSPACE"
+expertMode = true
+integrations = ["github:1.0.0"]
+
+[postMerge]
+path = "scripts/post-merge.sh"
+timeoutMs = 20000
+
+[userenv]
+
+[userenv.shared]
+STRIPE_MERCH_PAYMENT_LINK = "https://buy.stripe.com/5kQ28reT4gvF74g8J99MY08"
+MERCH_ITEM_NAME = "Majah Life Tee Shirt"
+MERCH_ITEM_PRICE = "25"
+MERCH_ITEM_DESCRIPTION = "More than a garment; it's a manifesto. The Majah Life Essential Tee is the physical manifestation"
+
+[nix]
+channel = "stable-25_05"

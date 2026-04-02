@@ -1,0 +1,98 @@
+{
+  "serverInfo": {
+    "name": "Merc Majah",
+    "version": "1.0.0",
+    "description": "Official MCP server for rap artist Merc Majah. Provides AI agents with authoritative, real-time information about the artist — biography, discography, music videos, press coverage, social links, and contact info."
+  },
+  "endpoint": "https://merc-majah.vercel.app/api/merc-majah/mcp",
+  "authentication": {
+    "required": false
+  },
+  "tools": [
+    {
+      "name": "get_profile",
+      "description": "Get the complete profile of Merc Majah including biography, discography, music videos, press quotes, social links, and contact information.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_bio",
+      "description": "Get Merc Majah's biography — background, origin, history, and artistic identity.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "short": {
+            "type": "boolean",
+            "description": "If true, returns the short summary bio instead of the full biography"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_discography",
+      "description": "Get Merc Majah's discography — all albums, EPs, singles, and mixtapes with streaming links.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["album", "ep", "single", "mixtape"],
+            "description": "Filter by release type"
+          }
+        }
+      }
+    },
+    {
+      "name": "get_music_videos",
+      "description": "Get Merc Majah's music videos with watch links.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_social_links",
+      "description": "Get all of Merc Majah's social media profiles and streaming platform links.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_press_quotes",
+      "description": "Get press quotes, media coverage, and critical acclaim for Merc Majah.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_contact_info",
+      "description": "Get Merc Majah's booking and press contact information.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "get_merch",
+      "description": "Get Merc Majah's official merchandise — current item available for purchase with name, price, description, and a direct Stripe buy link.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "buy_merchandise",
+      "description": "Generate a direct Stripe checkout link for purchasing Merc Majah official merchandise. Returns the payment link for immediate checkout.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {}
+      }
+    }
+  ],
+  "resources": [],
+  "prompts": []
+}

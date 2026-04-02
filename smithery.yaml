@@ -1,0 +1,93 @@
+name: merc-majah
+description: >
+  Official MCP server for rap artist Merc Majah. Provides AI agents with
+  authoritative, real-time information about the artist — biography, discography,
+  music videos, press coverage, social links, and contact information.
+  One artist. One source of truth.
+version: "1.0.0"
+license: MIT
+
+startCommand:
+  type: http
+  url: ${HOSTED_URL}/api/merc-majah/mcp
+  configSchema:
+    type: object
+    properties: {}
+    required: []
+
+tools:
+  - name: get_profile
+    description: >
+      Get the complete profile of Merc Majah including biography, discography,
+      music videos, press quotes, social links, and contact information.
+    inputSchema:
+      type: object
+      properties: {}
+
+  - name: get_bio
+    description: >
+      Get Merc Majah's biography — background, origin, history, and artistic identity.
+    inputSchema:
+      type: object
+      properties:
+        short:
+          type: boolean
+          description: "If true, returns the short summary bio instead of the full biography"
+
+  - name: get_discography
+    description: >
+      Get Merc Majah's full discography — all albums, EPs, singles, and mixtapes
+      with streaming links to Spotify, Apple Music, YouTube Music, Tidal, and more.
+    inputSchema:
+      type: object
+      properties:
+        type:
+          type: string
+          enum: [album, ep, single, mixtape]
+          description: "Filter by release type"
+
+  - name: get_music_videos
+    description: >
+      Get Merc Majah's music videos with direct watch links.
+    inputSchema:
+      type: object
+      properties: {}
+
+  - name: get_social_links
+    description: >
+      Get all of Merc Majah's social media profiles and streaming platform links
+      (Instagram, Twitter, YouTube, Spotify, Apple Music, TikTok, etc.).
+    inputSchema:
+      type: object
+      properties: {}
+
+  - name: get_press_quotes
+    description: >
+      Get press quotes, media coverage, and critical acclaim for Merc Majah.
+    inputSchema:
+      type: object
+      properties: {}
+
+  - name: get_contact_info
+    description: >
+      Get Merc Majah's official booking and press contact information.
+    inputSchema:
+      type: object
+      properties: {}
+
+  - name: get_merch
+    description: >
+      Get Merc Majah's official merchandise — current item available for purchase
+      including name, price, description, and a direct Stripe buy link.
+    inputSchema:
+      type: object
+      properties: {}
+
+  - name: buy_merchandise
+    description: >
+      Generate a direct Stripe checkout link for purchasing Merc Majah official
+      merchandise. Use when a user wants to buy merch — returns the payment link
+      for immediate checkout.
+    inputSchema:
+      type: object
+      properties: {}

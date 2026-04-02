@@ -1,0 +1,599 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Music Artist Directory API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: artists
+    description: Artist management
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /artists:
+    get:
+      operationId: listArtists
+      tags: [artists]
+      summary: List all artists
+      description: Returns a paginated list of all artists in the directory
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: genre
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of artists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArtistList"
+    post:
+      operationId: createArtist
+      tags: [artists]
+      summary: Create a new artist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateArtistInput"
+      responses:
+        "201":
+          description: Artist created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Artist"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /artists/{id}:
+    get:
+      operationId: getArtist
+      tags: [artists]
+      summary: Get artist by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Artist details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Artist"
+        "404":
+          description: Artist not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: updateArtist
+      tags: [artists]
+      summary: Update an artist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateArtistInput"
+      responses:
+        "200":
+          description: Artist updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Artist"
+        "404":
+          description: Artist not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    delete:
+      operationId: deleteArtist
+      tags: [artists]
+      summary: Delete an artist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Artist deleted
+        "404":
+          description: Artist not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /artists/slug/{slug}:
+    get:
+      operationId: getArtistBySlug
+      tags: [artists]
+      summary: Get artist by slug
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Artist details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Artist"
+        "404":
+          description: Artist not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /artists/search:
+    get:
+      operationId: searchArtists
+      tags: [artists]
+      summary: Search artists
+      description: Full-text search across artist names, bios, and genres
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: genre
+          in: query
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Search results
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ArtistSearchResults"
+
+  /genres:
+    get:
+      operationId: listGenres
+      tags: [artists]
+      summary: List all genres
+      description: Returns all distinct genres across the artist directory
+      responses:
+        "200":
+          description: List of genres
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenreList"
+
+  /stats:
+    get:
+      operationId: getStats
+      tags: [artists]
+      summary: Directory statistics
+      description: Returns counts and summaries for the artist directory
+      responses:
+        "200":
+          description: Directory stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DirectoryStats"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+      required:
+        - error
+
+    SocialLinks:
+      type: object
+      properties:
+        website:
+          type: string
+        instagram:
+          type: string
+        twitter:
+          type: string
+        facebook:
+          type: string
+        youtube:
+          type: string
+        spotify:
+          type: string
+        appleMusic:
+          type: string
+        soundcloud:
+          type: string
+        tiktok:
+          type: string
+        bandcamp:
+          type: string
+
+    Album:
+      type: object
+      properties:
+        title:
+          type: string
+        year:
+          type: integer
+        type:
+          type: string
+          enum: [album, ep, single, mixtape]
+        spotifyUrl:
+          type: string
+        appleMusicUrl:
+          type: string
+        youtubeMusicUrl:
+          type: string
+        tidalUrl:
+          type: string
+        deezerUrl:
+          type: string
+        amazonMusicUrl:
+          type: string
+      required:
+        - title
+        - year
+        - type
+
+    MusicVideo:
+      type: object
+      properties:
+        title:
+          type: string
+        url:
+          type: string
+          description: YouTube or Vimeo URL
+        year:
+          type: integer
+        description:
+          type: string
+      required:
+        - title
+        - url
+
+    PressQuote:
+      type: object
+      properties:
+        quote:
+          type: string
+        source:
+          type: string
+        year:
+          type: integer
+      required:
+        - quote
+        - source
+
+    Artist:
+      type: object
+      properties:
+        id:
+          type: integer
+        slug:
+          type: string
+        name:
+          type: string
+        bio:
+          type: string
+        shortBio:
+          type: string
+        genres:
+          type: array
+          items:
+            type: string
+        origin:
+          type: string
+        formedYear:
+          type: integer
+        imageUrl:
+          type: string
+        socialLinks:
+          $ref: "#/components/schemas/SocialLinks"
+        discography:
+          type: array
+          items:
+            $ref: "#/components/schemas/Album"
+        musicVideos:
+          type: array
+          items:
+            $ref: "#/components/schemas/MusicVideo"
+        pressQuotes:
+          type: array
+          items:
+            $ref: "#/components/schemas/PressQuote"
+        bookingEmail:
+          type: string
+        pressEmail:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        members:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        llmContext:
+          type: string
+          description: Additional context specifically written for LLM consumption
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - slug
+        - name
+        - bio
+        - genres
+        - createdAt
+        - updatedAt
+
+    CreateArtistInput:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        bio:
+          type: string
+        shortBio:
+          type: string
+        genres:
+          type: array
+          items:
+            type: string
+        origin:
+          type: string
+        formedYear:
+          type: integer
+        imageUrl:
+          type: string
+        socialLinks:
+          $ref: "#/components/schemas/SocialLinks"
+        discography:
+          type: array
+          items:
+            $ref: "#/components/schemas/Album"
+        musicVideos:
+          type: array
+          items:
+            $ref: "#/components/schemas/MusicVideo"
+        pressQuotes:
+          type: array
+          items:
+            $ref: "#/components/schemas/PressQuote"
+        bookingEmail:
+          type: string
+        pressEmail:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        members:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        llmContext:
+          type: string
+      required:
+        - name
+        - bio
+        - genres
+
+    UpdateArtistInput:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        bio:
+          type: string
+        shortBio:
+          type: string
+        genres:
+          type: array
+          items:
+            type: string
+        origin:
+          type: string
+        formedYear:
+          type: integer
+        imageUrl:
+          type: string
+        socialLinks:
+          $ref: "#/components/schemas/SocialLinks"
+        discography:
+          type: array
+          items:
+            $ref: "#/components/schemas/Album"
+        musicVideos:
+          type: array
+          items:
+            $ref: "#/components/schemas/MusicVideo"
+        pressQuotes:
+          type: array
+          items:
+            $ref: "#/components/schemas/PressQuote"
+        bookingEmail:
+          type: string
+        pressEmail:
+          type: string
+        labels:
+          type: array
+          items:
+            type: string
+        members:
+          type: array
+          items:
+            type: string
+        tags:
+          type: array
+          items:
+            type: string
+        llmContext:
+          type: string
+
+    ArtistList:
+      type: object
+      properties:
+        artists:
+          type: array
+          items:
+            $ref: "#/components/schemas/Artist"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+        totalPages:
+          type: integer
+      required:
+        - artists
+        - total
+        - page
+        - limit
+        - totalPages
+
+    ArtistSearchResults:
+      type: object
+      properties:
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/Artist"
+        query:
+          type: string
+        total:
+          type: integer
+      required:
+        - results
+        - query
+        - total
+
+    GenreList:
+      type: object
+      properties:
+        genres:
+          type: array
+          items:
+            type: string
+      required:
+        - genres
+
+    DirectoryStats:
+      type: object
+      properties:
+        totalArtists:
+          type: integer
+        totalGenres:
+          type: integer
+        recentlyAdded:
+          type: array
+          items:
+            $ref: "#/components/schemas/Artist"
+        topGenres:
+          type: array
+          items:
+            type: object
+            properties:
+              genre:
+                type: string
+              count:
+                type: integer
+            required:
+              - genre
+              - count
+      required:
+        - totalArtists
+        - totalGenres
+        - recentlyAdded
+        - topGenres
