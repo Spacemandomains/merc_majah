@@ -49,6 +49,7 @@ const formSchema = z.object({
   origin: z.string().optional(),
   formedYear: z.coerce.number().optional().or(z.literal("")),
   imageUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  imageStoreUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
   bookingEmail: z.string().email("Invalid email").optional().or(z.literal("")),
   pressEmail: z.string().email("Invalid email").optional().or(z.literal("")),
   socialLinks: z.object({
@@ -136,6 +137,7 @@ export default function ArtistEditor() {
       origin: "",
       formedYear: "",
       imageUrl: "",
+      imageStoreUrl: "",
       bookingEmail: "",
       pressEmail: "",
       socialLinks: {},
@@ -158,6 +160,7 @@ export default function ArtistEditor() {
         origin: artist.origin || "",
         formedYear: artist.formedYear || "",
         imageUrl: artist.imageUrl || "",
+        imageStoreUrl: (artist as any).imageStoreUrl || "",
         bookingEmail: artist.bookingEmail || "",
         pressEmail: artist.pressEmail || "",
         socialLinks: artist.socialLinks || {},
@@ -331,6 +334,14 @@ export default function ArtistEditor() {
                   <FormItem>
                     <FormLabel className="text-foreground/80">Image URL</FormLabel>
                     <FormControl><Input {...field} placeholder="https://..." className="bg-background/50 font-mono text-sm" /></FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )} />
+                <FormField control={form.control} name="imageStoreUrl" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-foreground/80">Purchase Link</FormLabel>
+                    <FormControl><Input {...field} placeholder="https://buy.stripe.com/... or store URL" className="bg-background/50 font-mono text-sm" /></FormControl>
+                    <FormDescription className="text-xs">Link to buy or license this visual asset.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )} />
