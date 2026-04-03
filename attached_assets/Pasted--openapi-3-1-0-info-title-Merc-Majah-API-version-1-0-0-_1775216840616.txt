@@ -1,0 +1,152 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Merc Majah API",
+    "version": "1.0.0",
+    "description": "Fetch verified Merc Majah artist data, visuals, merch, and music links"
+  },
+  "servers": [
+    {
+      "url": "https://merc-majah.vercel.app"
+    }
+  ],
+  "paths": {
+    "/api/artists/slug/{slug}": {
+      "get": {
+        "operationId": "getArtistBySlug",
+        "summary": "Get artist profile by slug",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Artist profile returned successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": { "type": "integer" },
+                    "slug": { "type": "string" },
+                    "name": { "type": "string" },
+                    "bio": { "type": "string" },
+                    "shortBio": { "type": "string" },
+                    "genres": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "origin": { "type": "string" },
+                    "formedYear": { "type": "integer" },
+                    "imageUrl": {
+                      "type": "string",
+                      "description": "Main artist photo URL"
+                    },
+                    "imageStoreUrl": { "type": "string" },
+                    "socialLinks": {
+                      "type": "object",
+                      "properties": {
+                        "website": { "type": "string" },
+                        "instagram": { "type": "string" },
+                        "twitter": { "type": "string" },
+                        "facebook": { "type": "string" },
+                        "youtube": { "type": "string" },
+                        "spotify": { "type": "string" },
+                        "appleMusic": { "type": "string" },
+                        "soundcloud": { "type": "string" },
+                        "tiktok": { "type": "string" },
+                        "bandcamp": { "type": "string" }
+                      }
+                    },
+                    "discography": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": { "type": "string" },
+                          "year": { "type": "integer" },
+                          "type": { "type": "string" },
+                          "spotifyUrl": { "type": "string" },
+                          "appleMusicUrl": { "type": "string" },
+                          "youtubeMusicUrl": { "type": "string" },
+                          "tidalUrl": { "type": "string" },
+                          "deezerUrl": { "type": "string" },
+                          "amazonMusicUrl": { "type": "string" }
+                        }
+                      }
+                    },
+                    "musicVideos": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": { "type": "string" },
+                          "url": { "type": "string" },
+                          "year": { "type": "integer" },
+                          "description": { "type": "string" },
+                          "thumbnailUrl": {
+                            "type": "string",
+                            "description": "Thumbnail image for the music video"
+                          }
+                        }
+                      }
+                    },
+                    "pressQuotes": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "quote": { "type": "string" },
+                          "source": { "type": "string" },
+                          "year": { "type": "integer" }
+                        }
+                      }
+                    },
+                    "merch": {
+                      "type": "object",
+                      "properties": {
+                        "name": { "type": "string" },
+                        "price": { "type": "number" },
+                        "currency": { "type": "string" },
+                        "description": { "type": "string" },
+                        "paymentLink": { "type": "string" },
+                        "imageUrl": {
+                          "type": "string",
+                          "description": "Official merch product image URL"
+                        },
+                        "available": { "type": "boolean" }
+                      }
+                    },
+                    "bookingEmail": { "type": "string" },
+                    "pressEmail": { "type": "string" },
+                    "labels": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "members": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "tags": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "llmContext": { "type": "string" },
+                    "createdAt": { "type": "string" },
+                    "updatedAt": { "type": "string" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
