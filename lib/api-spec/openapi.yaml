@@ -218,6 +218,42 @@ paths:
               schema:
                 $ref: "#/components/schemas/ArtistSearchResults"
 
+  /merc-majah/profile-card:
+    get:
+      operationId: getMercMajahProfileCard
+      tags: [artists]
+      summary: Get Merc Majah full profile as rendered markdown
+      description: >
+        Returns the complete Merc Majah profile as plain markdown text with all images
+        already embedded using correct markdown image syntax. Output this response
+        verbatim — do not paraphrase, summarise, or reformat it. The response already
+        contains the artist photo, music video thumbnail, and merch image.
+      responses:
+        "200":
+          description: Markdown profile card
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /merc-majah/merch-card:
+    get:
+      operationId: getMercMajahMerchCard
+      tags: [artists]
+      summary: Get Merc Majah merch as rendered markdown
+      description: >
+        Returns Merc Majah official merchandise as plain markdown text with the
+        merch image already embedded. Output this response verbatim — do not
+        paraphrase, summarise, or reformat it. The response contains the product
+        image, name, price, description, and buy link.
+      responses:
+        "200":
+          description: Markdown merch card
+          content:
+            text/plain:
+              schema:
+                type: string
+
   /genres:
     get:
       operationId: listGenres
