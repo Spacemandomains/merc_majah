@@ -6,10 +6,12 @@ import statsRouter from "./stats";
 import openApiRouter from "./openapi";
 import mercMajahMcpRouter from "./merc-majah-mcp";
 import merchRouter from "./merch";
+import authRouter from "./auth";
 
 const router: IRouter = Router();
 
 router.use(healthRouter);
+router.use(authRouter);
 router.use("/artists", artistsRouter);
 router.use("/genres", genresRouter);
 router.use("/stats", statsRouter);

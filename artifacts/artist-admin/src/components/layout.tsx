@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
-import { Mic2, Users, LayoutDashboard, Search as SearchIcon, Command, Loader2, Server } from "lucide-react";
+import { Mic2, Users, LayoutDashboard, Search as SearchIcon, Command, Loader2, Server, LogOut } from "lucide-react";
 import { useHealthCheck, useSearchArtists } from "@workspace/api-client-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 
-export function Layout({ children }: { children: React.ReactNode }) {
+export function Layout({ children, onLogout }: { children: React.ReactNode; onLogout?: () => void }) {
   const [location, setLocation] = useLocation();
   const { data: health } = useHealthCheck({ query: { refetchInterval: 30000 } });
   
@@ -69,16 +69,27 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </nav>
         
         <div className="p-4 border-t border-border/50 bg-sidebar/50 backdrop-blur-sm space-y-3">
-          <div className="flex items-center gap-3 text-xs font-medium">
-            <div className={`flex items-center justify-center w-6 h-6 rounded-md ${health?.status === "ok" ? "bg-emerald-500/20 text-emerald-500" : "bg-destructive/20 text-destructive"}`}>
-              <Server className="w-3.5 h-3.5" />
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3 text-xs font-medium">
+              <div className={`flex items-center justify-center w-6 h-6 rounded-md ${health?.status === "ok" ? "bg-emerald-500/20 text-emerald-500" : "bg-destructive/20 text-destructive"}`}>
+                <Server className="w-3.5 h-3.5" />
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sidebar-foreground/80">API Server</span>
+                <span className={health?.status === "ok" ? "text-emerald-500" : "text-destructive"}>
+                  {health?.status === "ok" ? "Connected" : "Disconnected"}
+                </span>
+              </div>
             </div>
-            <div className="flex flex-col">
-              <span className="text-sidebar-foreground/80">API Server</span>
-              <span className={health?.status === "ok" ? "text-emerald-500" : "text-destructive"}>
-                {health?.status === "ok" ? "Connected" : "Disconnected"}
-              </span>
-            </div>
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                title="Sign out"
+                className="flex items-center justify-center w-7 h-7 rounded-md text-sidebar-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
           <Link href="/privacy-policy" className="block text-xs text-sidebar-foreground/40 hover:text-sidebar-foreground/70 transition-colors">
             Privacy Policy

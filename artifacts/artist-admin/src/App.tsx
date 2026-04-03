@@ -9,13 +9,30 @@ import ArtistList from "@/pages/artists/list";
 import ArtistEditor from "@/pages/artists/editor";
 import ArtistPreview from "@/pages/artists/preview";
 import PrivacyPolicy from "@/pages/privacy-policy";
+import Login from "@/pages/login";
 import NotFound from "@/pages/not-found";
+import { useAuth } from "@/hooks/use-auth";
+import { Loader2 } from "lucide-react";
 
 const queryClient = new QueryClient();
 
-function Router() {
+function AuthGate() {
+  const { state, logout, recheck } = useAuth();
+
+  if (state === "loading") {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-background">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (state === "unauthenticated") {
+    return <Login onSuccess={recheck} />;
+  }
+
   return (
-    <Layout>
+    <Layout onLogout={logout}>
       <Switch>
         <Route path="/" component={Dashboard} />
         <Route path="/artists" component={ArtistList} />
@@ -34,7 +51,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Router />
+          <AuthGate />
         </WouterRouter>
         <Toaster />
         <Sonner richColors closeButton />
