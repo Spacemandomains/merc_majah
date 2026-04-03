@@ -1,0 +1,9 @@
+node_modules
+.git
+**/node_modules
+**/.git
+artifacts/api-server/dist
+artifacts/artist-admin/dist
+artifacts/mockup-sandbox/dist
+.local
+attached_assets
