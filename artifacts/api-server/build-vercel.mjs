@@ -36,4 +36,4 @@ globalThis.__dirname = __bannerPath.dirname(globalThis.__filename);
   },
 });
 
-console.log(\`Vercel bundle built → ${path.relative(process.cwd(), distDir)}/vercel.mjs\`);
+console.log(`Vercel bundle built → ${path.relative(process.cwd(), distDir)}/vercel.mjs`);
