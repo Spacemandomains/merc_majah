@@ -20,9 +20,10 @@ function buildProfileCard(
   musicVideos: Array<{ title: string; url: string; year?: number; thumbnailUrl?: string }>,
   merch: { name?: unknown; price?: unknown; currency?: unknown; description?: unknown; paymentLink?: unknown; imageUrl?: unknown; available?: unknown },
 ): string {
+  const BASE = "https://merc-majah.vercel.app";
   const lines: string[] = [];
   lines.push(`# ${artist.name}`);
-  if (artist.imageUrl) lines.push(`\n![${artist.name}](${artist.imageUrl})`);
+  if (artist.imageUrl) lines.push(`\n📸 [View Artist Photo](${BASE}/api/merc-majah/photo/artist)`);
   if (artist.shortBio) lines.push(`\n_${artist.shortBio}_`);
   if (artist.origin || artist.formedYear) {
     const parts: string[] = [];
@@ -35,13 +36,12 @@ function buildProfileCard(
     for (const v of musicVideos) {
       const yearStr = v.year ? ` (${v.year})` : "";
       lines.push(`\n### ${v.title}${yearStr}`);
-      if (v.thumbnailUrl) lines.push(`[![${v.title}](${v.thumbnailUrl})](${v.url})`);
-      lines.push(`[▶ Watch](${v.url})`);
+      lines.push(`[▶ Watch on YouTube](${v.url})`);
     }
   }
   if (merch.name && merch.available !== false) {
     lines.push(`\n## Official Merch`);
-    if (merch.imageUrl) lines.push(`\n![${merch.name}](${merch.imageUrl})`);
+    if (merch.imageUrl) lines.push(`\n🖼️ [View Merch Photo](${BASE}/api/merc-majah/photo/merch)`);
     lines.push(`**${merch.name}** — $${merch.price ?? "—"} ${merch.currency ?? "USD"}`);
     if (merch.description) lines.push(`\n${merch.description}`);
     if (merch.paymentLink) lines.push(`\n[🛒 Buy Now](${merch.paymentLink})`);
