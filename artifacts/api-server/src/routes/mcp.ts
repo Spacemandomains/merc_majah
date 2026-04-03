@@ -69,10 +69,10 @@ function formatArtistForLLM(artist: typeof artistsTable.$inferSelect): string {
 
   if (artist.musicVideos && (artist.musicVideos as any[]).length > 0) {
     lines.push(`\n## Music Videos`);
-    for (const video of artist.musicVideos as Array<{title: string; url: string; year?: number; description?: string}>) {
+    for (const video of artist.musicVideos as Array<{title: string; url: string; year?: number; description?: string; thumbnailUrl?: string}>) {
       const yearStr = video.year ? ` (${video.year})` : "";
       lines.push(`\n### ${video.title}${yearStr}`);
-      const thumb = getYouTubeThumbnail(video.url);
+      const thumb = video.thumbnailUrl || getYouTubeThumbnail(video.url);
       if (thumb) lines.push(`\n[![${video.title}](${thumb})](${video.url})`);
       lines.push(`[▶ Watch: ${video.title}](${video.url})`);
       if (video.description) lines.push(video.description);

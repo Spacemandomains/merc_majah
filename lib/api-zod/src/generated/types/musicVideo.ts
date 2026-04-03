@@ -12,4 +12,6 @@ export interface MusicVideo {
   url: string;
   year?: number;
   description?: string;
+  /** Thumbnail image URL (auto-generated from YouTube, or manually set) */
+  thumbnailUrl?: string;
 }

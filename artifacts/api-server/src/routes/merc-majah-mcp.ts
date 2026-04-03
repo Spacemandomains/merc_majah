@@ -37,7 +37,7 @@ type Discography = Array<{
   deezerUrl?: string;
   amazonMusicUrl?: string;
 }>;
-type MusicVideo = Array<{ title: string; url: string; year?: number; description?: string }>;
+type MusicVideo = Array<{ title: string; url: string; year?: number; description?: string; thumbnailUrl?: string }>;
 type PressQuote = Array<{ quote: string; source: string; year?: number }>;
 
 function formatFullProfile(artist: Artist): string {
@@ -74,7 +74,7 @@ function formatFullProfile(artist: Artist): string {
     for (const video of musicVideos) {
       const yearStr = video.year ? ` (${video.year})` : "";
       lines.push(`\n### ${video.title}${yearStr}`);
-      const thumb = getYouTubeThumbnail(video.url);
+      const thumb = video.thumbnailUrl || getYouTubeThumbnail(video.url);
       if (thumb) {
         lines.push(`[![${video.title}](${thumb})](${video.url})`);
       }
@@ -239,7 +239,7 @@ function createMercMajahMcpServer(): McpServer {
         for (const video of videos) {
           const yearStr = video.year ? ` (${video.year})` : "";
           lines.push(`## ${video.title}${yearStr}`);
-          const thumb = getYouTubeThumbnail(video.url);
+          const thumb = video.thumbnailUrl || getYouTubeThumbnail(video.url);
           if (thumb) lines.push(`\n[![${video.title}](${thumb})](${video.url})`);
           lines.push(`[▶ Watch: ${video.title}](${video.url})`);
           if (video.description) lines.push(video.description);

@@ -28,11 +28,17 @@ const albumSchema = z.object({
   amazonMusicUrl: z.string().url().optional().or(z.literal("")),
 });
 
+function extractYouTubeThumbnail(url: string): string {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([^&\s?#]+)/);
+  return match ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : "";
+}
+
 const musicVideoSchema = z.object({
   title: z.string().min(1, "Title is required"),
   url: z.string().url("Must be a valid YouTube or Vimeo URL"),
   year: z.coerce.number().optional().or(z.literal("")),
   description: z.string().optional(),
+  thumbnailUrl: z.string().optional(),
 });
 
 const quoteSchema = z.object({
@@ -597,8 +603,33 @@ export default function ArtistEditor() {
                         <FormField control={form.control} name={`musicVideos.${index}.url`} render={({ field }) => (
                           <FormItem>
                             <FormLabel className="text-xs text-muted-foreground uppercase tracking-wider">YouTube / Vimeo URL</FormLabel>
-                            <FormControl><Input {...field} placeholder="https://youtube.com/watch?v=..." className="font-mono text-sm bg-background/50" /></FormControl>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="https://youtube.com/watch?v=..."
+                                className="font-mono text-sm bg-background/50"
+                                onChange={(e) => {
+                                  field.onChange(e);
+                                  const thumb = extractYouTubeThumbnail(e.target.value);
+                                  if (thumb) form.setValue(`musicVideos.${index}.thumbnailUrl`, thumb);
+                                }}
+                              />
+                            </FormControl>
                             <FormMessage />
+                          </FormItem>
+                        )} />
+                        <FormField control={form.control} name={`musicVideos.${index}.thumbnailUrl`} render={({ field }) => (
+                          <FormItem>
+                            <div className="flex items-start gap-3">
+                              {field.value && (
+                                <img src={field.value} alt="Thumbnail preview" className="w-24 h-14 object-cover rounded border border-border/60 shrink-0" />
+                              )}
+                              <div className="flex-1">
+                                <FormLabel className="text-xs text-muted-foreground uppercase tracking-wider">Thumbnail URL</FormLabel>
+                                <FormControl><Input {...field} placeholder="Auto-filled for YouTube links" className="font-mono text-xs bg-background/30 text-muted-foreground" /></FormControl>
+                                <FormDescription className="text-xs">Auto-filled from YouTube. Override manually if needed.</FormDescription>
+                              </div>
+                            </div>
                           </FormItem>
                         )} />
                         <FormField control={form.control} name={`musicVideos.${index}.description`} render={({ field }) => (
