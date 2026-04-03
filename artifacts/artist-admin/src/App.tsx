@@ -8,6 +8,7 @@ import Dashboard from "@/pages/dashboard";
 import ArtistList from "@/pages/artists/list";
 import ArtistEditor from "@/pages/artists/editor";
 import ArtistPreview from "@/pages/artists/preview";
+import PrivacyPolicy from "@/pages/privacy-policy";
 import NotFound from "@/pages/not-found";
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ function Router() {
         <Route path="/artists/new" component={ArtistEditor} />
         <Route path="/artists/:id" component={ArtistEditor} />
         <Route path="/preview/:slug" component={ArtistPreview} />
+        <Route path="/privacy-policy" component={PrivacyPolicy} />
         <Route component={NotFound} />
       </Switch>
     </Layout>

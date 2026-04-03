@@ -68,7 +68,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           })}
         </nav>
         
-        <div className="p-4 border-t border-border/50 bg-sidebar/50 backdrop-blur-sm">
+        <div className="p-4 border-t border-border/50 bg-sidebar/50 backdrop-blur-sm space-y-3">
           <div className="flex items-center gap-3 text-xs font-medium">
             <div className={`flex items-center justify-center w-6 h-6 rounded-md ${health?.status === "ok" ? "bg-emerald-500/20 text-emerald-500" : "bg-destructive/20 text-destructive"}`}>
               <Server className="w-3.5 h-3.5" />
@@ -80,6 +80,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
               </span>
             </div>
           </div>
+          <Link href="/privacy-policy" className="block text-xs text-sidebar-foreground/40 hover:text-sidebar-foreground/70 transition-colors">
+            Privacy Policy
+          </Link>
         </div>
       </aside>
 
