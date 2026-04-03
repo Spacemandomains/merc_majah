@@ -16,7 +16,8 @@ async function getMercMajah() {
 }
 
 function baseUrl(req: any): string {
-  return process.env.API_BASE_URL ?? `${req.protocol}://${req.get("host")}`;
+  const envUrl = process.env.API_BASE_URL?.trim();
+  return envUrl ?? `${req.protocol}://${req.get("host")}`;
 }
 
 router.get("/photo/artist", async (req, res) => {
