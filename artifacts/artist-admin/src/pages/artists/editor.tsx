@@ -328,13 +328,14 @@ export default function ArtistEditor() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <Card className="border-border/60 bg-card/40 backdrop-blur-md">
               <CardHeader className="bg-secondary/10 border-b border-border/50 pb-4">
-                <CardTitle className="text-base flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Visual Asset</CardTitle>
+                <CardTitle className="text-base flex items-center gap-2"><Upload className="w-4 h-4 text-primary" /> Artist Photo</CardTitle>
               </CardHeader>
               <CardContent className="pt-6 space-y-4">
                 <FormField control={form.control} name="imageUrl" render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-foreground/80">Image URL</FormLabel>
+                    <FormLabel className="text-foreground/80">Photo URL</FormLabel>
                     <FormControl><Input {...field} placeholder="https://..." className="bg-background/50 font-mono text-sm" /></FormControl>
+                    <FormDescription className="text-xs">Primary artist photo or press image. Shown in the directory and embedded in LLM responses.</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )} />

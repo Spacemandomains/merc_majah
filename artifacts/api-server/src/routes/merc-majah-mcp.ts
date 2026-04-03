@@ -20,6 +20,12 @@ async function getMercMajah() {
 }
 
 type Artist = typeof artistsTable.$inferSelect;
+
+function getYouTubeThumbnail(url: string): string | null {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([^&\s?#]+)/);
+  return match ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : null;
+}
+
 type Discography = Array<{
   title: string;
   year: number;
@@ -37,6 +43,7 @@ type PressQuote = Array<{ quote: string; source: string; year?: number }>;
 function formatFullProfile(artist: Artist): string {
   const lines: string[] = [];
   lines.push(`# ${artist.name}`);
+  if (artist.imageUrl) lines.push(`\n![${artist.name}](${artist.imageUrl})`);
   if (artist.shortBio) lines.push(`\n${artist.shortBio}`);
   lines.push(`\n## Biography`);
   lines.push(artist.bio);
@@ -66,9 +73,13 @@ function formatFullProfile(artist: Artist): string {
     lines.push(`\n## Music Videos`);
     for (const video of musicVideos) {
       const yearStr = video.year ? ` (${video.year})` : "";
-      let line = `- **${video.title}**${yearStr} — [Watch](${video.url})`;
-      if (video.description) line += `\n  ${video.description}`;
-      lines.push(line);
+      lines.push(`\n### ${video.title}${yearStr}`);
+      const thumb = getYouTubeThumbnail(video.url);
+      if (thumb) {
+        lines.push(`[![${video.title}](${thumb})](${video.url})`);
+      }
+      lines.push(`[▶ Watch: ${video.title}](${video.url})`);
+      if (video.description) lines.push(video.description);
     }
   }
   const pressQuotes = (artist.pressQuotes ?? []) as PressQuote;
@@ -88,6 +99,14 @@ function formatFullProfile(artist: Artist): string {
       lines.push(`- **${label}**: ${url}`);
     }
   }
+  const merch = artist.merch as { name?: string; price?: string; currency?: string; description?: string; paymentLink?: string; imageUrl?: string; available?: boolean } | null;
+  if (merch?.name && merch.available !== false) {
+    lines.push(`\n## Official Merchandise`);
+    if (merch.imageUrl) lines.push(`\n![${merch.name}](${merch.imageUrl})`);
+    lines.push(`**${merch.name}** — $${merch.price ?? "—"} ${merch.currency ?? "USD"}`);
+    if (merch.description) lines.push(merch.description);
+    if (merch.paymentLink) lines.push(`\n[🛒 Buy Now](${merch.paymentLink})`);
+  }
   if (artist.bookingEmail) { lines.push(`\n## Booking`); lines.push(`Email: ${artist.bookingEmail}`); }
   if (artist.pressEmail) { lines.push(`\n## Press Contact`); lines.push(`Email: ${artist.pressEmail}`); }
   if (artist.llmContext) { lines.push(`\n## Additional Context`); lines.push(artist.llmContext); }
@@ -101,20 +120,29 @@ const MERCH = {
   price: process.env.MERCH_ITEM_PRICE ?? "25",
   description: process.env.MERCH_ITEM_DESCRIPTION ?? "More than a garment; it's a manifesto. The Majah Life Essential Tee is the physical manifestation",
   paymentLink: process.env.STRIPE_MERCH_PAYMENT_LINK ?? "",
+  imageUrl: process.env.MERCH_IMAGE_URL ?? "",
   currency: "USD",
 };
 
-function formatMerchCard(): string {
+function formatMerchCard(artistMerch?: { name?: string; price?: string; currency?: string; description?: string; paymentLink?: string; imageUrl?: string } | null): string {
+  const item = (artistMerch?.name) ? artistMerch : MERCH;
   const lines: string[] = [];
   lines.push(`# Merc Majah Official Merchandise`);
   lines.push(``);
-  lines.push(`## ${MERCH.name}`);
-  lines.push(`**Price:** $${MERCH.price} ${MERCH.currency}`);
+  lines.push(`## ${item.name}`);
+  if (item.imageUrl) {
+    lines.push(``);
+    lines.push(`![${item.name}](${item.imageUrl})`);
+  }
   lines.push(``);
-  lines.push(MERCH.description);
+  lines.push(`**Price:** $${item.price} ${item.currency ?? "USD"}`);
   lines.push(``);
-  if (MERCH.paymentLink) {
-    lines.push(`**Buy Now:** [${MERCH.paymentLink}](${MERCH.paymentLink})`);
+  if (item.description) lines.push(item.description);
+  lines.push(``);
+  if (item.paymentLink) {
+    lines.push(`[🛒 Buy Now — ${item.name}](${item.paymentLink})`);
+    lines.push(``);
+    lines.push(`Direct URL: ${item.paymentLink}`);
   }
   return lines.join("\n");
 }
@@ -211,7 +239,9 @@ function createMercMajahMcpServer(): McpServer {
         for (const video of videos) {
           const yearStr = video.year ? ` (${video.year})` : "";
           lines.push(`## ${video.title}${yearStr}`);
-          lines.push(`Watch: [${video.url}](${video.url})`);
+          const thumb = getYouTubeThumbnail(video.url);
+          if (thumb) lines.push(`\n[![${video.title}](${thumb})](${video.url})`);
+          lines.push(`[▶ Watch: ${video.title}](${video.url})`);
           if (video.description) lines.push(video.description);
           lines.push("");
         }
@@ -297,7 +327,9 @@ function createMercMajahMcpServer(): McpServer {
     {},
     async () => {
       try {
-        return { content: [{ type: "text", text: formatMerchCard() }] };
+        const artist = await getMercMajah();
+        const artistMerch = artist?.merch as { name?: string; price?: string; currency?: string; description?: string; paymentLink?: string; imageUrl?: string } | null;
+        return { content: [{ type: "text", text: formatMerchCard(artistMerch) }] };
       } catch (err) {
         return { content: [{ type: "text", text: `Error: ${String(err)}` }], isError: true };
       }

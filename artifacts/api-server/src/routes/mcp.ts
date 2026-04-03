@@ -8,10 +8,17 @@ import { eq, ilike, or, sql, desc } from "drizzle-orm";
 
 const router: IRouter = Router();
 
+function getYouTubeThumbnail(url: string): string | null {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([^&\s?#]+)/);
+  return match ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : null;
+}
+
 function formatArtistForLLM(artist: typeof artistsTable.$inferSelect): string {
   const lines: string[] = [];
 
   lines.push(`# ${artist.name}`);
+
+  if (artist.imageUrl) lines.push(`\n![${artist.name}](${artist.imageUrl})`);
 
   if (artist.shortBio) {
     lines.push(`\n${artist.shortBio}`);
@@ -64,10 +71,20 @@ function formatArtistForLLM(artist: typeof artistsTable.$inferSelect): string {
     lines.push(`\n## Music Videos`);
     for (const video of artist.musicVideos as Array<{title: string; url: string; year?: number; description?: string}>) {
       const yearStr = video.year ? ` (${video.year})` : "";
-      let line = `- **${video.title}**${yearStr} — [Watch](${video.url})`;
-      if (video.description) line += `\n  ${video.description}`;
-      lines.push(line);
+      lines.push(`\n### ${video.title}${yearStr}`);
+      const thumb = getYouTubeThumbnail(video.url);
+      if (thumb) lines.push(`\n[![${video.title}](${thumb})](${video.url})`);
+      lines.push(`[▶ Watch: ${video.title}](${video.url})`);
+      if (video.description) lines.push(video.description);
     }
+  }
+  const merch = artist.merch as { name?: string; price?: string; currency?: string; description?: string; paymentLink?: string; imageUrl?: string; available?: boolean } | null;
+  if (merch?.name && merch.available !== false) {
+    lines.push(`\n## Official Merchandise`);
+    if (merch.imageUrl) lines.push(`\n![${merch.name}](${merch.imageUrl})`);
+    lines.push(`**${merch.name}** — $${merch.price ?? "—"} ${merch.currency ?? "USD"}`);
+    if (merch.description) lines.push(merch.description);
+    if (merch.paymentLink) lines.push(`\n[🛒 Buy Now](${merch.paymentLink})`);
   }
 
   if (artist.pressQuotes && artist.pressQuotes.length > 0) {
