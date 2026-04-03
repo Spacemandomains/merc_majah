@@ -62,7 +62,7 @@ router.get("/profile-card", async (req, res) => {
 
     const lines: string[] = [];
     lines.push(`# ${artist.name}`);
-    if (artistPhotoUrl) lines.push(`\n![${artist.name}](${artistPhotoUrl})`);
+    if (artistPhotoUrl) lines.push(`\n📸 [View Artist Photo](${artistPhotoUrl})`);
     if (artist.shortBio) lines.push(`\n_${artist.shortBio}_`);
     lines.push(`\n${artist.bio}`);
     if (artist.origin || artist.formedYear) {
@@ -76,17 +76,15 @@ router.get("/profile-card", async (req, res) => {
     if (videos.length > 0) {
       lines.push(`\n## Music Videos`);
       for (const v of videos) {
-        const thumb = v.thumbnailUrl || getYouTubeThumbnail(v.url);
         const yearStr = v.year ? ` (${v.year})` : "";
         lines.push(`\n### ${v.title}${yearStr}`);
-        if (thumb) lines.push(`[![${v.title}](${thumb})](${v.url})`);
         lines.push(`[▶ Watch on YouTube](${v.url})`);
       }
     }
 
     if (merch.name && merch.available !== false) {
       lines.push(`\n## Official Merch`);
-      if (merchPhotoUrl) lines.push(`\n![${merch.name}](${merchPhotoUrl})`);
+      if (merchPhotoUrl) lines.push(`\n🖼️ [View Merch Photo](${merchPhotoUrl})`);
       lines.push(`**${merch.name}** — $${merch.price ?? "—"} ${merch.currency ?? "USD"}`);
       if (merch.description) lines.push(`\n${merch.description}`);
       if (merch.paymentLink) lines.push(`\n[🛒 Buy Now](${merch.paymentLink})`);
@@ -106,8 +104,8 @@ router.get("/merch-card", async (req, res) => {
     const merchPhotoUrl = merch.imageUrl ? `${base}/api/merc-majah/photo/merch` : null;
 
     const lines: string[] = [];
-    if (merchPhotoUrl) lines.push(`![${merch.name}](${merchPhotoUrl})`);
-    lines.push(`\n## ${merch.name}`);
+    lines.push(`## ${merch.name}`);
+    if (merchPhotoUrl) lines.push(`\n🖼️ [View Photo](${merchPhotoUrl})`);
     lines.push(`**Price:** $${merch.price ?? "—"} ${merch.currency ?? "USD"}`);
     if (merch.description) lines.push(`\n${merch.description}`);
     if (merch.paymentLink) {
