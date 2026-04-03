@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useLocation, useParams } from "wouter";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,8 +11,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Loader2, ArrowLeft, Plus, Trash2, Upload, Bot, Music, Globe, FileText, UserCircle, Save, Video, ShoppingBag } from "lucide-react";
+import { Loader2, ArrowLeft, Plus, Trash2, Upload, Bot, Music, Globe, FileText, UserCircle, Save, Video, ShoppingBag, CheckCircle2, ExternalLink } from "lucide-react";
 import { TagInput } from "@/components/ui/tag-input";
 
 const albumSchema = z.object({
@@ -87,6 +88,7 @@ export default function ArtistEditor() {
   const params = useParams();
   const isNew = !params.id || params.id === "new";
   const artistId = isNew ? 0 : Number(params.id);
+  const [createdArtist, setCreatedArtist] = useState<{ name: string; slug: string } | null>(null);
 
   const queryClient = useQueryClient();
 
@@ -99,10 +101,9 @@ export default function ArtistEditor() {
 
   const createMutation = useCreateArtist({
     mutation: {
-      onSuccess: () => {
-        toast.success("Artist created successfully");
+      onSuccess: (data) => {
         queryClient.invalidateQueries({ queryKey: getListArtistsQueryKey() });
-        setLocation("/artists");
+        setCreatedArtist({ name: data.name, slug: data.slug });
       },
       onError: (error: any) => {
         toast.error(error.message || "Failed to create artist");
@@ -702,6 +703,39 @@ export default function ArtistEditor() {
           </div>
         </form>
       </Form>
+
+      <Dialog open={!!createdArtist} onOpenChange={(open) => { if (!open) { setCreatedArtist(null); setLocation("/artists"); } }}>
+        <DialogContent className="sm:max-w-md border-border/60 bg-card/95 backdrop-blur-xl">
+          <DialogHeader className="items-center text-center pb-2">
+            <div className="mb-4 flex items-center justify-center w-16 h-16 rounded-full bg-primary/10 border border-primary/20">
+              <CheckCircle2 className="w-8 h-8 text-primary" />
+            </div>
+            <DialogTitle className="text-2xl font-bold tracking-tight">Profile Initialized</DialogTitle>
+            <DialogDescription className="text-muted-foreground mt-1">
+              <span className="font-semibold text-foreground">{createdArtist?.name}</span> has been added to the directory and is ready for AI agents to discover.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-2 rounded-lg bg-muted/50 border border-border/50 px-4 py-3 font-mono text-sm text-muted-foreground flex items-center gap-2">
+            <span className="text-primary/60 select-none">/api/artists/slug/</span>
+            <span className="text-foreground font-medium">{createdArtist?.slug}</span>
+          </div>
+          <div className="flex flex-col gap-2 mt-4">
+            <Button
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
+              onClick={() => { setCreatedArtist(null); setLocation("/artists"); }}
+            >
+              View All Artists
+            </Button>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={() => { setCreatedArtist(null); }}
+            >
+              Add Another Profile
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
