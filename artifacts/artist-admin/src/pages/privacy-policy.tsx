@@ -1,7 +1,8 @@
-import { Shield } from "lucide-react";
+import { Shield, ArrowLeft } from "lucide-react";
+import { Link } from "wouter";
 
-export default function PrivacyPolicy() {
-  return (
+export default function PrivacyPolicy({ standalone }: { standalone?: boolean }) {
+  const inner = (
     <div className="max-w-3xl mx-auto space-y-10 animate-in fade-in zoom-in-95 duration-500">
       <div>
         <div className="flex items-center gap-3 mb-3">
@@ -123,4 +124,20 @@ export default function PrivacyPolicy() {
       </p>
     </div>
   );
+
+  if (standalone) {
+    return (
+      <div className="min-h-screen w-full bg-background relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none z-0" />
+        <div className="relative z-10 overflow-y-auto p-8 lg:p-12">
+          <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors">
+            <ArrowLeft className="w-4 h-4" /> Back to sign in
+          </Link>
+          {inner}
+        </div>
+      </div>
+    );
+  }
+
+  return inner;
 }

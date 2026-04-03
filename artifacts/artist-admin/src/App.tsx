@@ -1,4 +1,4 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "sonner";
@@ -18,6 +18,11 @@ const queryClient = new QueryClient();
 
 function AuthGate() {
   const { state, logout, recheck } = useAuth();
+  const [location] = useLocation();
+
+  if (location === "/privacy-policy") {
+    return <PrivacyPolicy standalone />;
+  }
 
   if (state === "loading") {
     return (

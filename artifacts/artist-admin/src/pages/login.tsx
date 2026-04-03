@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Mic2, Loader2, Lock } from "lucide-react";
+import { Link } from "wouter";
 import { login } from "@/hooks/use-auth";
 
 interface LoginProps {
@@ -98,6 +99,12 @@ export default function Login({ onSuccess }: LoginProps) {
             </button>
           </form>
         </div>
+
+        <p className="text-center mt-6 text-xs text-muted-foreground/50">
+          <Link href="/privacy-policy" className="hover:text-muted-foreground transition-colors underline underline-offset-2">
+            Privacy Policy
+          </Link>
+        </p>
       </div>
     </div>
   );
