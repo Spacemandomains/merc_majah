@@ -177,6 +177,7 @@ export default function ArtistEditor() {
         tags: artist.tags || [],
         discography: (artist.discography || []).map((d: any) => ({
           ...d,
+          type: (d.type ?? "single").toLowerCase() as "album" | "ep" | "single" | "mixtape",
           spotifyUrl: d.spotifyUrl ?? "",
           appleMusicUrl: d.appleMusicUrl ?? "",
           youtubeMusicUrl: d.youtubeMusicUrl ?? "",
