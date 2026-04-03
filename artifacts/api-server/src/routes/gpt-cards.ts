@@ -15,20 +15,54 @@ async function getMercMajah() {
   return rows[0] ?? null;
 }
 
-router.get("/profile-card", async (_req, res) => {
+function baseUrl(req: any): string {
+  return process.env.API_BASE_URL ?? `${req.protocol}://${req.get("host")}`;
+}
+
+router.get("/photo/artist", async (req, res) => {
   try {
     const artist = await getMercMajah();
-    if (!artist) {
-      res.type("text/plain").send("Artist profile not available.");
-      return;
-    }
+    if (!artist?.imageUrl) { res.status(404).send("No image"); return; }
+    const upstream = await fetch(artist.imageUrl);
+    if (!upstream.ok) { res.status(502).send("Upstream error"); return; }
+    const buf = await upstream.arrayBuffer();
+    res.set("Content-Type", upstream.headers.get("content-type") ?? "image/png");
+    res.set("Cache-Control", "public, max-age=86400");
+    res.set("Access-Control-Allow-Origin", "*");
+    res.send(Buffer.from(buf));
+  } catch { res.status(500).send("Error"); }
+});
+
+router.get("/photo/merch", async (req, res) => {
+  try {
+    const artist = await getMercMajah();
+    const merch = (artist?.merch ?? {}) as Record<string, any>;
+    if (!merch.imageUrl) { res.status(404).send("No image"); return; }
+    const upstream = await fetch(merch.imageUrl);
+    if (!upstream.ok) { res.status(502).send("Upstream error"); return; }
+    const buf = await upstream.arrayBuffer();
+    res.set("Content-Type", upstream.headers.get("content-type") ?? "image/png");
+    res.set("Cache-Control", "public, max-age=86400");
+    res.set("Access-Control-Allow-Origin", "*");
+    res.send(Buffer.from(buf));
+  } catch { res.status(500).send("Error"); }
+});
+
+router.get("/profile-card", async (req, res) => {
+  try {
+    const artist = await getMercMajah();
+    if (!artist) { res.type("text/plain").send("Artist profile not available."); return; }
+
+    const base = baseUrl(req);
+    const artistPhotoUrl = artist.imageUrl ? `${base}/api/merc-majah/photo/artist` : null;
 
     const videos = (artist.musicVideos ?? []) as Array<{ title: string; url: string; year?: number; thumbnailUrl?: string }>;
     const merch = (artist.merch ?? {}) as Record<string, any>;
+    const merchPhotoUrl = merch.imageUrl ? `${base}/api/merc-majah/photo/merch` : null;
 
     const lines: string[] = [];
     lines.push(`# ${artist.name}`);
-    if (artist.imageUrl) lines.push(`\n![${artist.name}](${artist.imageUrl})`);
+    if (artistPhotoUrl) lines.push(`\n![${artist.name}](${artistPhotoUrl})`);
     if (artist.shortBio) lines.push(`\n_${artist.shortBio}_`);
     lines.push(`\n${artist.bio}`);
     if (artist.origin || artist.formedYear) {
@@ -52,42 +86,37 @@ router.get("/profile-card", async (_req, res) => {
 
     if (merch.name && merch.available !== false) {
       lines.push(`\n## Official Merch`);
-      if (merch.imageUrl) lines.push(`\n![${merch.name}](${merch.imageUrl})`);
+      if (merchPhotoUrl) lines.push(`\n![${merch.name}](${merchPhotoUrl})`);
       lines.push(`**${merch.name}** — $${merch.price ?? "—"} ${merch.currency ?? "USD"}`);
       if (merch.description) lines.push(`\n${merch.description}`);
       if (merch.paymentLink) lines.push(`\n[🛒 Buy Now](${merch.paymentLink})`);
     }
 
     res.type("text/plain").send(lines.join("\n"));
-  } catch (err) {
-    res.status(500).type("text/plain").send("Error loading profile.");
-  }
+  } catch { res.status(500).type("text/plain").send("Error loading profile."); }
 });
 
-router.get("/merch-card", async (_req, res) => {
+router.get("/merch-card", async (req, res) => {
   try {
     const artist = await getMercMajah();
     const merch = (artist?.merch ?? {}) as Record<string, any>;
+    if (!merch.name) { res.type("text/plain").send("No merch available."); return; }
 
-    if (!merch.name) {
-      res.type("text/plain").send("No merch available.");
-      return;
-    }
+    const base = baseUrl(req);
+    const merchPhotoUrl = merch.imageUrl ? `${base}/api/merc-majah/photo/merch` : null;
 
     const lines: string[] = [];
-    lines.push(`## ${merch.name}`);
-    if (merch.imageUrl) lines.push(`\n![${merch.name}](${merch.imageUrl})`);
-    lines.push(`\n**Price:** $${merch.price ?? "—"} ${merch.currency ?? "USD"}`);
+    if (merchPhotoUrl) lines.push(`![${merch.name}](${merchPhotoUrl})`);
+    lines.push(`\n## ${merch.name}`);
+    lines.push(`**Price:** $${merch.price ?? "—"} ${merch.currency ?? "USD"}`);
     if (merch.description) lines.push(`\n${merch.description}`);
     if (merch.paymentLink) {
       lines.push(`\n[🛒 Buy Now — ${merch.name}](${merch.paymentLink})`);
-      lines.push(`\nDirect link: ${merch.paymentLink}`);
+      lines.push(`Direct link: ${merch.paymentLink}`);
     }
 
     res.type("text/plain").send(lines.join("\n"));
-  } catch (err) {
-    res.status(500).type("text/plain").send("Error loading merch.");
-  }
+  } catch { res.status(500).type("text/plain").send("Error loading merch."); }
 });
 
 export default router;
