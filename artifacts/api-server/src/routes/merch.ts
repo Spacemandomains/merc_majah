@@ -14,14 +14,29 @@ router.get("/", async (_req, res) => {
     for (const row of artists) {
       const m = row.merch as Record<string, any> | null;
       if (m && m.name) {
+        const imageUrl = m.imageUrl ?? null;
+        const paymentLink = m.paymentLink ?? "";
+        const name = m.name;
+        const price = m.price ?? null;
+        const currency = m.currency ?? "USD";
+        const description = m.description ?? "";
+
+        const displayLines: string[] = [];
+        displayLines.push(`## ${name}`);
+        if (imageUrl) displayLines.push(`\n![${name}](${imageUrl})`);
+        displayLines.push(`\n**Price:** $${price ?? "—"} ${currency}`);
+        if (description) displayLines.push(`\n${description}`);
+        if (paymentLink) displayLines.push(`\n[🛒 Buy Now — ${name}](${paymentLink})`);
+
         res.json({
-          name: m.name,
-          price: m.price ?? null,
-          currency: m.currency ?? "USD",
-          description: m.description ?? "",
-          paymentLink: m.paymentLink ?? "",
-          imageUrl: m.imageUrl ?? null,
+          name,
+          price,
+          currency,
+          description,
+          paymentLink,
+          imageUrl,
           available: m.available ?? true,
+          display: displayLines.join("\n"),
         });
         return;
       }

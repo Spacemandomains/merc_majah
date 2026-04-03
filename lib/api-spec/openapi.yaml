@@ -88,6 +88,10 @@ paths:
       operationId: getArtist
       tags: [artists]
       summary: Get artist by ID
+      description: >
+        Returns full artist profile. The response includes a `profileCard` field
+        which is pre-formatted markdown — always render it directly so images
+        (artist photo, YouTube thumbnails, merch image) display correctly.
       parameters:
         - name: id
           in: path
@@ -161,6 +165,10 @@ paths:
       operationId: getArtistBySlug
       tags: [artists]
       summary: Get artist by slug
+      description: >
+        Returns full artist profile. The response includes a `profileCard` field
+        which is pre-formatted markdown — always render it directly so images
+        (artist photo, YouTube thumbnails, merch image) display correctly.
       parameters:
         - name: slug
           in: path
@@ -394,6 +402,12 @@ components:
         llmContext:
           type: string
           description: Additional context specifically written for LLM consumption
+        profileCard:
+          type: string
+          description: >
+            Pre-formatted markdown profile card with embedded images (artist photo,
+            YouTube video thumbnails, merch image). Always render this field as
+            markdown when displaying an artist to the user so that images appear.
         createdAt:
           type: string
           format: date-time
@@ -408,6 +422,7 @@ components:
         - genres
         - createdAt
         - updatedAt
+        - profileCard
 
     CreateArtistInput:
       type: object

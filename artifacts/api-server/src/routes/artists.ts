@@ -15,6 +15,40 @@ function getYouTubeThumbnail(url: string): string | null {
   return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : null;
 }
 
+function buildProfileCard(
+  artist: typeof artistsTable.$inferSelect,
+  musicVideos: Array<{ title: string; url: string; year?: number; thumbnailUrl?: string }>,
+  merch: { name?: unknown; price?: unknown; currency?: unknown; description?: unknown; paymentLink?: unknown; imageUrl?: unknown; available?: unknown },
+): string {
+  const lines: string[] = [];
+  lines.push(`# ${artist.name}`);
+  if (artist.imageUrl) lines.push(`\n![${artist.name}](${artist.imageUrl})`);
+  if (artist.shortBio) lines.push(`\n_${artist.shortBio}_`);
+  if (artist.origin || artist.formedYear) {
+    const parts: string[] = [];
+    if (artist.origin) parts.push(artist.origin);
+    if (artist.formedYear) parts.push(`Est. ${artist.formedYear}`);
+    lines.push(`\n${parts.join(" • ")}`);
+  }
+  if (musicVideos.length > 0) {
+    lines.push(`\n## Music Videos`);
+    for (const v of musicVideos) {
+      const yearStr = v.year ? ` (${v.year})` : "";
+      lines.push(`\n### ${v.title}${yearStr}`);
+      if (v.thumbnailUrl) lines.push(`[![${v.title}](${v.thumbnailUrl})](${v.url})`);
+      lines.push(`[▶ Watch](${v.url})`);
+    }
+  }
+  if (merch.name && merch.available !== false) {
+    lines.push(`\n## Official Merch`);
+    if (merch.imageUrl) lines.push(`\n![${merch.name}](${merch.imageUrl})`);
+    lines.push(`**${merch.name}** — $${merch.price ?? "—"} ${merch.currency ?? "USD"}`);
+    if (merch.description) lines.push(`\n${merch.description}`);
+    if (merch.paymentLink) lines.push(`\n[🛒 Buy Now](${merch.paymentLink})`);
+  }
+  return lines.join("\n");
+}
+
 function mapArtist(artist: typeof artistsTable.$inferSelect) {
   const rawVideos = (artist.musicVideos ?? []) as Array<{ title: string; url: string; year?: number; description?: string; thumbnailUrl?: string }>;
   const musicVideos = rawVideos.map((v) => ({
@@ -55,6 +89,7 @@ function mapArtist(artist: typeof artistsTable.$inferSelect) {
     members: artist.members ?? [],
     tags: artist.tags ?? [],
     llmContext: artist.llmContext ?? undefined,
+    profileCard: buildProfileCard(artist, musicVideos, merch),
     createdAt: artist.createdAt.toISOString(),
     updatedAt: artist.updatedAt.toISOString(),
   };
