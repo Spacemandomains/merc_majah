@@ -56,6 +56,7 @@ function mapArtist(artist: typeof artistsTable.$inferSelect) {
     thumbnailUrl: v.thumbnailUrl || getYouTubeThumbnail(v.url) || undefined,
   }));
 
+  const BASE = "https://merc-majah.vercel.app";
   const rawMerch = (artist.merch ?? {}) as Record<string, unknown>;
   const merch = {
     name: rawMerch.name ?? undefined,
@@ -65,6 +66,7 @@ function mapArtist(artist: typeof artistsTable.$inferSelect) {
     paymentLink: rawMerch.paymentLink ?? undefined,
     imageUrl: rawMerch.imageUrl ?? undefined,
     available: rawMerch.available ?? true,
+    photoLink: rawMerch.imageUrl ? `🖼️ [View Photo](${BASE}/api/merc-majah/photo/merch)` : undefined,
   };
 
   return {
