@@ -23,7 +23,8 @@ function baseUrl(req: any): string {
 router.get("/photo/artist", async (req, res) => {
   try {
     const artist = await getMercMajah();
-    if (!artist?.imageUrl) { res.status(404).send("No image"); return; }
+    const ownDomain = "merc-majah.vercel.app";
+    if (!artist?.imageUrl || artist.imageUrl.includes(ownDomain)) { res.status(404).send("No source image configured"); return; }
     const upstream = await fetch(artist.imageUrl);
     if (!upstream.ok) { res.status(502).send("Upstream error"); return; }
     const buf = await upstream.arrayBuffer();
@@ -38,7 +39,8 @@ router.get("/photo/merch", async (req, res) => {
   try {
     const artist = await getMercMajah();
     const merch = (artist?.merch ?? {}) as Record<string, any>;
-    if (!merch.imageUrl) { res.status(404).send("No image"); return; }
+    const ownDomain = "merc-majah.vercel.app";
+    if (!merch.imageUrl || merch.imageUrl.includes(ownDomain)) { res.status(404).send("No source image configured"); return; }
     const upstream = await fetch(merch.imageUrl);
     if (!upstream.ok) { res.status(502).send("Upstream error"); return; }
     const buf = await upstream.arrayBuffer();
