@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "wouter";
 import { useListArtists, useListGenres, useDeleteArtist, getListArtistsQueryKey } from "@workspace/api-client-react";
+import { SafeImage } from "@/components/ui/safe-image";
 import { useQueryClient } from "@tanstack/react-query";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -103,13 +104,16 @@ export default function ArtistList() {
           {data?.artists.map(artist => (
             <div key={artist.id} className="bg-card/40 backdrop-blur-sm border border-border/60 rounded-xl overflow-hidden hover:border-primary/50 transition-all duration-300 group hover:shadow-xl hover:shadow-primary/5 flex flex-col">
               <div className="aspect-square bg-secondary/30 relative overflow-hidden">
-                {artist.imageUrl ? (
-                  <img src={artist.imageUrl} alt={artist.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-secondary/20">
-                    <Mic2 className="w-12 h-12 text-muted-foreground/30" />
-                  </div>
-                )}
+                <SafeImage
+                  src={artist.imageUrl}
+                  alt={artist.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                  fallback={
+                    <div className="w-full h-full flex items-center justify-center bg-secondary/20">
+                      <Mic2 className="w-12 h-12 text-muted-foreground/30" />
+                    </div>
+                  }
+                />
                 
                 {/* Overlay gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-transparent" />

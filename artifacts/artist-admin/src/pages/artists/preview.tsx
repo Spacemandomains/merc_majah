@@ -1,6 +1,7 @@
 import { useGetArtistBySlug } from "@workspace/api-client-react";
 import { useParams, Link } from "wouter";
 import { Loader2, Mic2, ArrowLeft, Globe, Twitter, Instagram, Disc } from "lucide-react";
+import { SafeImage } from "@/components/ui/safe-image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 
@@ -45,7 +46,7 @@ export default function ArtistPreview() {
         <div className="h-48 bg-secondary/30 relative overflow-hidden">
            {artist.imageUrl && (
              <>
-               <img src={artist.imageUrl} alt="" className="w-full h-full object-cover blur-xl opacity-50 scale-110" />
+               <SafeImage src={artist.imageUrl} alt="" className="w-full h-full object-cover blur-xl opacity-50 scale-110" />
                <div className="absolute inset-0 bg-gradient-to-t from-card/90 via-card/50 to-transparent" />
              </>
            )}
@@ -54,13 +55,16 @@ export default function ArtistPreview() {
         <div className="px-8 pb-8 relative -mt-24">
           <div className="flex flex-col md:flex-row gap-6 items-start md:items-end mb-6">
             <div className="w-40 h-40 rounded-xl overflow-hidden border-4 border-card bg-secondary shadow-2xl shrink-0">
-              {artist.imageUrl ? (
-                <img src={artist.imageUrl} alt={artist.name} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-secondary/50">
-                  <Mic2 className="w-12 h-12 text-muted-foreground/30" />
-                </div>
-              )}
+              <SafeImage
+                src={artist.imageUrl}
+                alt={artist.name}
+                className="w-full h-full object-cover"
+                fallback={
+                  <div className="w-full h-full flex items-center justify-center bg-secondary/50">
+                    <Mic2 className="w-12 h-12 text-muted-foreground/30" />
+                  </div>
+                }
+              />
             </div>
             <div className="flex-1 pb-2">
               <h1 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-2">{artist.name}</h1>

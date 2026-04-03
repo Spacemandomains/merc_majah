@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useLocation, useParams } from "wouter";
+import { SafeImage } from "@/components/ui/safe-image";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -355,9 +356,16 @@ export default function ArtistEditor() {
                 )} />
                 {form.watch("imageUrl") && (
                   <div className="mt-4 rounded-xl overflow-hidden bg-muted border border-border flex justify-center aspect-square relative shadow-inner">
-                    <img src={form.watch("imageUrl")} alt="Preview" className="object-cover w-full h-full" onError={(e) => {
-                      (e.target as HTMLImageElement).src = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNjY2IiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PGNpcmNsZSBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz48bGluZSB4MT0iMTIiIHkxPSI4IiB4Mj0iMTIiIHkyPSIxNiIvPjxsaW5lIHgxPSI4IiB5MT0iMTIiIHgyPSIxNiIgeTI9IjEyIi8+PC9zdmc+';
-                    }} />
+                    <SafeImage
+                      src={form.watch("imageUrl")}
+                      alt="Preview"
+                      className="object-cover w-full h-full"
+                      fallback={
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground/40 text-xs">
+                          Image not available
+                        </div>
+                      }
+                    />
                   </div>
                 )}
               </CardContent>
@@ -622,7 +630,16 @@ export default function ArtistEditor() {
                           <FormItem>
                             <div className="flex items-start gap-3">
                               {field.value && (
-                                <img src={field.value} alt="Thumbnail preview" className="w-24 h-14 object-cover rounded border border-border/60 shrink-0" />
+                                <SafeImage
+                                  src={field.value}
+                                  alt="Thumbnail preview"
+                                  className="w-24 h-14 object-cover rounded border border-border/60 shrink-0"
+                                  fallback={
+                                    <div className="w-24 h-14 rounded border border-border/60 shrink-0 bg-secondary/30 flex items-center justify-center text-muted-foreground/40 text-xs">
+                                      No image
+                                    </div>
+                                  }
+                                />
                               )}
                               <div className="flex-1">
                                 <FormLabel className="text-xs text-muted-foreground uppercase tracking-wider">Thumbnail URL</FormLabel>

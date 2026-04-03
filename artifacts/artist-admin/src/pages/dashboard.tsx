@@ -1,6 +1,7 @@
 import { useGetStats } from "@workspace/api-client-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Users, Disc3, Mic2, Loader2, ArrowRight } from "lucide-react";
+import { SafeImage } from "@/components/ui/safe-image";
 import { Link } from "wouter";
 import MerchCard from "@/components/MerchCard";
 
@@ -96,11 +97,12 @@ export default function Dashboard() {
               {stats.recentlyAdded.map((artist) => (
                 <Link key={artist.id} href={`/artists/${artist.id}`} className="flex items-center gap-4 group p-3 -mx-3 rounded-lg hover:bg-secondary/40 transition-colors border border-transparent hover:border-border">
                   <div className="w-12 h-12 rounded-md bg-secondary/80 flex items-center justify-center overflow-hidden shrink-0 border border-border/50">
-                    {artist.imageUrl ? (
-                      <img src={artist.imageUrl} alt={artist.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                    ) : (
-                      <Mic2 className="w-5 h-5 text-muted-foreground" />
-                    )}
+                    <SafeImage
+                      src={artist.imageUrl}
+                      alt={artist.name}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      fallback={<Mic2 className="w-5 h-5 text-muted-foreground" />}
+                    />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold truncate group-hover:text-primary transition-colors">{artist.name}</p>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Mic2, Users, LayoutDashboard, Search as SearchIcon, Command, Loader2, Server, LogOut } from "lucide-react";
+import { SafeImage } from "@/components/ui/safe-image";
 import { useHealthCheck, useSearchArtists } from "@workspace/api-client-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
@@ -138,11 +139,12 @@ export function Layout({ children, onLogout }: { children: React.ReactNode; onLo
                     className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-secondary/50 text-left transition-colors"
                   >
                     <div className="w-10 h-10 rounded-md bg-secondary overflow-hidden shrink-0">
-                      {artist.imageUrl ? (
-                        <img src={artist.imageUrl} alt={artist.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center"><Mic2 className="w-4 h-4 text-muted-foreground" /></div>
-                      )}
+                      <SafeImage
+                        src={artist.imageUrl}
+                        alt={artist.name}
+                        className="w-full h-full object-cover"
+                        fallback={<div className="w-full h-full flex items-center justify-center"><Mic2 className="w-4 h-4 text-muted-foreground" /></div>}
+                      />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="font-semibold truncate">{artist.name}</div>

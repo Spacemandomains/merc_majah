@@ -10,7 +10,29 @@ function generateSlug(name: string): string {
   return slugify(name, { lower: true, strict: true });
 }
 
+function getYouTubeThumbnail(url: string): string | null {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/))([^&\s?#]+)/);
+  return match ? `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` : null;
+}
+
 function mapArtist(artist: typeof artistsTable.$inferSelect) {
+  const rawVideos = (artist.musicVideos ?? []) as Array<{ title: string; url: string; year?: number; description?: string; thumbnailUrl?: string }>;
+  const musicVideos = rawVideos.map((v) => ({
+    ...v,
+    thumbnailUrl: v.thumbnailUrl || getYouTubeThumbnail(v.url) || undefined,
+  }));
+
+  const rawMerch = (artist.merch ?? {}) as Record<string, unknown>;
+  const merch = {
+    name: rawMerch.name ?? undefined,
+    price: rawMerch.price ?? undefined,
+    currency: rawMerch.currency ?? "USD",
+    description: rawMerch.description ?? undefined,
+    paymentLink: rawMerch.paymentLink ?? undefined,
+    imageUrl: rawMerch.imageUrl ?? undefined,
+    available: rawMerch.available ?? true,
+  };
+
   return {
     id: artist.id,
     slug: artist.slug,
@@ -24,9 +46,9 @@ function mapArtist(artist: typeof artistsTable.$inferSelect) {
     imageStoreUrl: artist.imageStoreUrl ?? undefined,
     socialLinks: artist.socialLinks ?? {},
     discography: artist.discography ?? [],
-    musicVideos: artist.musicVideos ?? [],
+    musicVideos,
     pressQuotes: artist.pressQuotes ?? [],
-    merch: artist.merch ?? {},
+    merch,
     bookingEmail: artist.bookingEmail ?? undefined,
     pressEmail: artist.pressEmail ?? undefined,
     labels: artist.labels ?? [],
